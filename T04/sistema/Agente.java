@@ -1,10 +1,11 @@
 package sistema;
 
+import busca.BuscaCustoUniforme;
 import ambiente.*;
 import problema.*;
 import comuns.*;
 import static comuns.PontosCardeais.*;
-
+import busca.*;
 /**
  *
  * @author tacla
@@ -14,8 +15,7 @@ public class Agente implements PontosCardeais {
     Model model;
     Problema prob;
     Estado estAtu; // guarda o estado atual (posição atual do agente)
-    BuscaCustoUniforme bCUniforme;
-    BuscaInformada bInformada;
+    Busca busca;
     
     int plan[]={N,N,N,NE,L,L,L,L,NE,NE,L};
     double custo;
@@ -46,7 +46,9 @@ public class Agente implements PontosCardeais {
         this.custo = 0;
         
         // Busca
-        this.bCUniforme = new BuscaCustoUniforme(this);
+        this.busca = new BuscaCustoUniforme(this);
+        plan = busca.CriarPlano();
+        busca.PrintarArvore();
     }
     
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
@@ -56,7 +58,7 @@ public class Agente implements PontosCardeais {
         ct++;
         int ap[];
         ap = prob.acoesPossiveis(estAtu);
-        plan = bCUniforme.CriarPlano();
+        
         // nao atingiu objetivo e ha acoesPossiveis a serem executadas no plano
         if (!prob.testeObjetivo(estAtu) && ct < plan.length) {
            System.out.println("estado atual: " + estAtu.getLin() + "," + estAtu.getCol());
@@ -105,6 +107,10 @@ public class Agente implements PontosCardeais {
         pos = model.lerPos();
         return new Estado(pos[0], pos[1]);
     }
+        
+     public Problema getProblem(){
+         return this.prob;
+     }
 }
     
 

@@ -1,4 +1,4 @@
-package sistema;
+package busca;
 
 import arvore.TreeNode;
 import arvore.fnComparator;
@@ -6,12 +6,13 @@ import problema.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+import sistema.Agente;
 
 /**
  *
  * @author THIAGO
  */
-public class BuscaCustoUniforme {
+public class BuscaCustoUniforme implements Busca{
     private final TreeNode raiz;
     private final Agente agnt;
     
@@ -22,6 +23,7 @@ public class BuscaCustoUniforme {
         this.raiz.setGnHn(0, 0);
     }
     
+    @Override
     public int[] CriarPlano(){
         int i, j;
         List<Integer> solucao = new ArrayList<>();
@@ -29,9 +31,9 @@ public class BuscaCustoUniforme {
         TreeNode filho;
         TreeNode noAtual = raiz;
         boolean achouSolucao = false;
-        boolean estadoVisitado = false;
+        boolean estadoVisitado;
         final List<Estado> estadosVisitados = new ArrayList<>();
-        int [] acoesPossiveis = this.agnt.prob.acoesPossiveis(noAtual.getState());
+        int [] acoesPossiveis;
         Estado proxEstado;
         fnComparator comparador = new fnComparator();
         PriorityQueue fronteira = new PriorityQueue(comparador);
@@ -42,8 +44,8 @@ public class BuscaCustoUniforme {
         do{
             /* Explora o nó */
             noAtual = (TreeNode) fronteira.remove();
-            acoesPossiveis = this.agnt.prob.acoesPossiveis(noAtual.getState());
-            if (agnt.prob.testeObjetivo(noAtual.getState()))
+            acoesPossiveis = this.agnt.getProblem().acoesPossiveis(noAtual.getState());
+            if (agnt.getProblem().testeObjetivo(noAtual.getState()))
                 achouSolucao = true;
             
             estadosVisitados.add(noAtual.getState());
@@ -53,7 +55,7 @@ public class BuscaCustoUniforme {
                 
                 // Se a Ação é possível, adiciona na fronteira
                 if (acoesPossiveis[i] != -1){   
-                    proxEstado = this.agnt.prob.suc(noAtual.getState(), i);
+                    proxEstado = this.agnt.getProblem().suc(noAtual.getState(), i);
                     estadoVisitado = false;
                     
                     for (j=0; j < estadosVisitados.size(); j++) {
@@ -65,7 +67,7 @@ public class BuscaCustoUniforme {
                         filho = noAtual.addChild();
                         filho.setState(proxEstado);
                         filho.setAction(i);
-                        filho.setGnHn(noAtual.getGn() + this.agnt.prob.obterCustoAcao(noAtual.getState(), i, proxEstado), 0);
+                        filho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), i, proxEstado) + noAtual.getGn(), 0);
                         fronteira.add(filho);
                     }                        
                 }    
@@ -85,6 +87,7 @@ public class BuscaCustoUniforme {
         return plano;
     }
     
+    @Override
     public void PrintarArvore() {
         raiz.printSubTree();
     }   
