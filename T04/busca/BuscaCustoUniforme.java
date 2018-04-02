@@ -40,6 +40,8 @@ public class BuscaCustoUniforme implements Busca{
         
         //estadosVisitados.add(noAtual.getState());
         fronteira.add(noAtual);
+        int iteracoes = 0;
+        int count = 1;
 
         do{
             /* Explora o nó */
@@ -68,10 +70,12 @@ public class BuscaCustoUniforme implements Busca{
                         filho.setState(proxEstado);
                         filho.setAction(i);
                         filho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), i, proxEstado) + noAtual.getGn(), 0);
+                        count += 1;
                         fronteira.add(filho);
                     }                        
                 }    
             }
+            iteracoes += 1;
         }while(!achouSolucao);
         
         while(noAtual.getParent() != null)
@@ -83,6 +87,13 @@ public class BuscaCustoUniforme implements Busca{
         plano = new int[solucao.size()];
         for(i  = 0; i < solucao.size(); i++)
             plano[i] = solucao.get(solucao.size()-i-1);
+        
+        System.out.println("numero de iteracoes na busca uniforme: ");
+        System.out.println(iteracoes);
+        System.out.println("numero de nós explorados na busca uniforme: ");
+        System.out.println(estadosVisitados.size());
+        System.out.println("numero de nós gerados na busca uniforme: ");
+        System.out.println(count);
         
         return plano;
     }

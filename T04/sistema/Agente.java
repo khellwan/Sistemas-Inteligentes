@@ -6,6 +6,7 @@ import problema.*;
 import comuns.*;
 import static comuns.PontosCardeais.*;
 import busca.*;
+import java.util.Arrays;
 /**
  *
  * @author tacla
@@ -17,7 +18,7 @@ public class Agente implements PontosCardeais {
     Estado estAtu; // guarda o estado atual (posição atual do agente)
     Busca busca;
     
-    int plan[]={N,N,N,NE,L,L,L,L,NE,NE,L};
+    int plan[];
     double custo;
     static int ct = -1;
            
@@ -46,8 +47,10 @@ public class Agente implements PontosCardeais {
         this.custo = 0;
         
         // Busca
-        this.busca = new BuscaCustoUniforme(this);
+        this.busca = new BuscaCustoUniforme(this);    //busca uniforme
+        //this.busca = new BuscaInformada(this,true);   //true ou false no segundo parametro muda a heurística utilizada
         plan = busca.CriarPlano();
+        System.out.println(Arrays.toString(plan));
         busca.PrintarArvore();
     }
     
