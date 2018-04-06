@@ -18,7 +18,7 @@ public class Agente implements PontosCardeais {
     Estado estAtu; // guarda o estado atual (posição atual do agente)
     Busca busca;
     
-    int plan[] = {N,NE,SE,SE,L,L,NE,NE,L};
+    int plan[] = {N,NE,SE,SE,L,L,NE,NE,L}; // poi
     double custo;
     static int ct = -1;
            
