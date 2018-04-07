@@ -1,12 +1,10 @@
 package sistema;
 
-import busca.BuscaCustoUniforme;
 import ambiente.*;
 import problema.*;
 import comuns.*;
 import static comuns.PontosCardeais.*;
 import busca.*;
-import java.util.Arrays;
 /**
  *
  * @author tacla
@@ -16,9 +14,8 @@ public class Agente implements PontosCardeais {
     Model model;
     Problema prob;
     Estado estAtu; // guarda o estado atual (posição atual do agente)
-    Busca busca;
+    BuscaLRTA_Estrela busca;
     
-    int plan[] = {N,NE,SE,SE,L,L,NE,NE,L}; // poi
     double custo;
     static int ct = -1;
            
@@ -42,23 +39,21 @@ public class Agente implements PontosCardeais {
         this.custo = 0;
         
         // Busca
-        //this.busca = new BuscaCustoUniforme(this);    //busca uniforme
-        //this.busca = new BuscaInformada(this,true);   //true ou false no segundo parametro muda a heurística utilizada
-        //plan = busca.CriarPlano();
-        //System.out.println(Arrays.toString(plan));
-        //busca.PrintarArvore();
+        this.busca = new BuscaLRTA_Estrela(this);
+        busca.PrintarArvore();
     }
     
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
      * @return 1 enquanto o plano não acabar; -1 quando acabar
      */
     public int deliberar() {
-        ct++;
+        //ct++;
         int ap[];
         ap = prob.acoesPossiveis(estAtu);
+        int proxAcao = busca.EscolheAcao();
         
         // nao atingiu objetivo e ha acoesPossiveis a serem executadas no plano
-        if (!prob.testeObjetivo(estAtu) && ct < plan.length) {
+        if (!prob.testeObjetivo(estAtu)) {
            System.out.println("estado atual: " + estAtu.getLin() + "," + estAtu.getCol());
            System.out.print("açoes possiveis: {");
            for (int i=0;i<ap.length;i++) {
@@ -67,20 +62,20 @@ public class Agente implements PontosCardeais {
            }
 
 
-           executarIr(plan[ct]);
+           executarIr(proxAcao);
            
            // atualiza custo
-           if (plan[ct] % 2 == 0 ) // acoes pares = N, L, S, O
+           if (proxAcao % 2 == 0 ) // acoes pares = N, L, S, O
                custo = custo + 1;
            else
                custo = custo + 1.5;
            
-           System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
+           //System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
            System.out.println("custo ate o momento: " + custo);
            System.out.println("**************************\n\n");
            
            // atualiza estado atual - sabendo que o ambiente eh deterministico
-           estAtu = prob.suc(estAtu, plan[ct]);
+           estAtu = prob.suc(estAtu, proxAcao);
                       
         }
         else

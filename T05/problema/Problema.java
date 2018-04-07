@@ -28,7 +28,7 @@ public class Problema implements PontosCardeais {
      * @param maxCol máximo de colunas do labirinto
      */
     public void criarLabirinto(int maxLin, int maxCol) {
-        this.crencaLabir = new Labirinto(maxCol, maxLin);
+        this.crencaLabir = new Labirinto(maxLin, maxCol);
        
     }
 
