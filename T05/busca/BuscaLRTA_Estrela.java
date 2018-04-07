@@ -24,7 +24,6 @@ public class BuscaLRTA_Estrela {
     private final Agente agnt;
     private final PriorityQueue fronteira;
     float Hn[][];
-    final List<TreeNode> nosVisitados = new ArrayList<>();
     
     public BuscaLRTA_Estrela(Agente agnt){
         int i, j;
@@ -33,7 +32,6 @@ public class BuscaLRTA_Estrela {
         this.raiz.setState(this.agnt.sensorPosicao());
         this.raiz.setGnHn(0, 0);
         this.noAtual = raiz;
-        this.nosVisitados.add(raiz);
         fnComparator comparador = new fnComparator();
         this.fronteira = new PriorityQueue(comparador);
         /*  Define uma matriz com as heurísticas */
@@ -50,29 +48,25 @@ public class BuscaLRTA_Estrela {
         /* Variáveis */
         int proxAcao;
         int [] acoesPossiveis;
-        boolean achouSolucao = false;
         TreeNode noVizinho;
         Estado estadoVizinho;
         
         /* Define o conjunto de ações possíveis */
         acoesPossiveis = this.agnt.getProblem().acoesPossiveis(noAtual.getState());
-        if (agnt.getProblem().testeObjetivo(noAtual.getState()))
-            achouSolucao = true;
 
-        if (!achouSolucao){
-            /* Adiciona os nós vizinhos na fronteira */ 
-            for (proxAcao = 0; proxAcao < acoesPossiveis.length; proxAcao++){
+        /* Adiciona os nós vizinhos na fronteira */ 
+        for (proxAcao = 0; proxAcao < acoesPossiveis.length; proxAcao++){
 
-                // Se a ação é possível, adiciona na fronteira
-                if (acoesPossiveis[proxAcao] != -1){   
-                    estadoVizinho = this.agnt.getProblem().suc(noAtual.getState(), proxAcao);
-                    noVizinho = noAtual.addChild();
-                    noVizinho.setState(estadoVizinho);
-                    noVizinho.setAction(proxAcao);
-                    noVizinho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), proxAcao, estadoVizinho) + noAtual.getGn(), Hn[estadoVizinho.getLin()][estadoVizinho.getCol()]);
-                    fronteira.add(noVizinho);
-                }    
-            }
+            // Se a ação é possível, adiciona na fronteira
+            if (acoesPossiveis[proxAcao] != -1){   
+                estadoVizinho = this.agnt.getProblem().suc(noAtual.getState(), proxAcao);
+                noVizinho = noAtual.addChild();
+                noVizinho.setState(estadoVizinho);
+                noVizinho.setAction(proxAcao);
+                noVizinho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), proxAcao, estadoVizinho) + noAtual.getGn(), Hn[estadoVizinho.getLin()][estadoVizinho.getCol()]);
+                fronteira.add(noVizinho);
+                //System.out.println("\nCusto (heuristica) para ir na direção " + proxAcao + " é de " + noVizinho.getHn());
+            }    
         }
     }
     
@@ -95,13 +89,18 @@ public class BuscaLRTA_Estrela {
             }
         }
         
-        /* Atualiza o H(n) do nó em que o agente está com o menor F(n) das fronteiras. */
-        this.Hn[this.agnt.sensorPosicao().getLin()][this.agnt.sensorPosicao().getCol()] = menorCusto;
+        /* Atualiza o H(n) do nó em que o agente está com o menor F(n) das fronteiras se não for o estado objetivo*/
+        if (!this.agnt.getProblem().testeObjetivo(this.agnt.sensorPosicao())){
+            this.Hn[this.agnt.sensorPosicao().getLin()][this.agnt.sensorPosicao().getCol()] = menorCusto;
+        }
         
         return proxAcao;
     }
     
     public void PrintarArvore() {
         raiz.printSubTree();
-    }  
+    }
+    public void RedefineBusca(){
+        this.noAtual = this.raiz;
+    }
 }

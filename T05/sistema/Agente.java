@@ -15,9 +15,10 @@ public class Agente implements PontosCardeais {
     Problema prob;
     Estado estAtu; // guarda o estado atual (posição atual do agente)
     BuscaLRTA_Estrela busca;
-    
+    double razao;
     double custo;
     static int ct = -1;
+    int execucao = 0;
            
     public Agente(Model m) {
         this.model = m;
@@ -40,7 +41,7 @@ public class Agente implements PontosCardeais {
         
         // Busca
         this.busca = new BuscaLRTA_Estrela(this);
-        busca.PrintarArvore();
+        this.razao = 50;
     }
     
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
@@ -61,7 +62,6 @@ public class Agente implements PontosCardeais {
                    System.out.print(acao[i]+" ");
            }
 
-
            executarIr(proxAcao);
            
            // atualiza custo
@@ -70,7 +70,8 @@ public class Agente implements PontosCardeais {
            else
                custo = custo + 1.5;
            
-           //System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
+           this.razao = custo/12; // 12 é o custo ótimo
+            //System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
            System.out.println("custo ate o momento: " + custo);
            System.out.println("**************************\n\n");
            
@@ -103,6 +104,22 @@ public class Agente implements PontosCardeais {
         
      public Problema getProblem(){
          return this.prob;
+     }
+     
+     public double getRazao(){
+         return this.razao;
+     }
+     
+     public double getExecucao(){
+         return this.execucao;
+     }
+     
+     public void redefineAgente(){
+        this.estAtu = prob.estIni;
+        this.custo = 0;
+        this.model.setPos(4, 0);
+        this.model.setObj(2, 8);
+        busca.RedefineBusca();
      }
 }
     

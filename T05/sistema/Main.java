@@ -37,10 +37,15 @@ public class Main {
         
         // agente escolhe proxima açao e a executa no ambiente (modificando
         // o estado do labirinto porque ocupa passa a ocupar nova posicao)
-        
-        System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
-        while (ag.deliberar() != -1) {  
-            model.desenhar(); 
+        while(ag.razao != 1){
+            ag.redefineAgente();
+            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
+            ag.execucao++;
+            while (ag.deliberar() != -1) {  
+                model.desenhar(); 
+            }
+            System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
+            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
         }
     }
 }
