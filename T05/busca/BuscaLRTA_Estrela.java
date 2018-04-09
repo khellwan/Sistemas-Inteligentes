@@ -6,10 +6,9 @@
 package busca;
 
 import arvore.TreeNode;
-import arvore.fnComparator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
+import java.util.Random;
 import sistema.Agente;
 import problema.*;
 
@@ -22,8 +21,10 @@ public class BuscaLRTA_Estrela {
     private final TreeNode raiz;
     private TreeNode noAtual;
     private final Agente agnt;
-    private final PriorityQueue fronteira;
+    private List<TreeNode> fronteira;
+    private List<Integer> caminho;
     float Hn[][];
+    private final static Random random = new Random(System.currentTimeMillis());;
     
     public BuscaLRTA_Estrela(Agente agnt){
         int i, j;
@@ -31,14 +32,16 @@ public class BuscaLRTA_Estrela {
         this.raiz = new TreeNode();
         this.raiz.setState(this.agnt.sensorPosicao());
         this.raiz.setGnHn(0, 0);
+        this.caminho = new ArrayList<>();
+        this.fronteira = new ArrayList<>();
         this.noAtual = raiz;
-        fnComparator comparador = new fnComparator();
-        this.fronteira = new PriorityQueue(comparador);
         /*  Define uma matriz com as heurísticas */
         Hn = new float [this.agnt.getProblem().crencaLabir.getMaxLin()][this.agnt.getProblem().crencaLabir.getMaxCol()];
         for (i = 0; i < this.agnt.getProblem().crencaLabir.getMaxLin(); i++){
             for (j = 0; j < this.agnt.getProblem().crencaLabir.getMaxCol(); j++){
-                this.Hn[i][j] = (float)  Math.abs(j - this.agnt.getProblem().estObj.getCol()); // Distância horizontal
+                //this.Hn[i][j] = (float) Math.abs(j - this.agnt.getProblem().estObj.getCol()); // Distância horizontal
+                this.Hn[i][j] = (float) (Math.sqrt(Math.pow(j - this.agnt.getProblem().estObj.getCol(), 2) +
+                            Math.pow(i - this.agnt.getProblem().estObj.getLin(), 2))); //distância euclidiana
             }
         }
         
@@ -63,44 +66,58 @@ public class BuscaLRTA_Estrela {
                 noVizinho = noAtual.addChild();
                 noVizinho.setState(estadoVizinho);
                 noVizinho.setAction(proxAcao);
-                noVizinho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), proxAcao, estadoVizinho) + noAtual.getGn(), Hn[estadoVizinho.getLin()][estadoVizinho.getCol()]);
+                noVizinho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), proxAcao, estadoVizinho), Hn[estadoVizinho.getLin()][estadoVizinho.getCol()]);
                 fronteira.add(noVizinho);
-                //System.out.println("\nCusto (heuristica) para ir na direção " + proxAcao + " é de " + noVizinho.getHn());
+                System.out.println("\nCusto (heuristica) para ir na direção " + proxAcao + " é de " + noVizinho.getHn());
             }    
         }
     }
     
     public int EscolheAcao(){
         /* Variáveis */
-        int proxAcao = -1;
+        int proxAcao;
         float menorCusto = Float.POSITIVE_INFINITY; // Infinito
+        List <TreeNode> MenorCustoList = new ArrayList<>();
         TreeNode proxNo;
         
         /* Atualiza os custos das fronteiras */
         AtualizarCustos();
         
-        /* Escolhe a fronteira de menor F(n) para ser o próximo estado */
-        while(!fronteira.isEmpty()) {
-            proxNo = (TreeNode) fronteira.remove();
-            if (proxNo.getFn() < menorCusto){
+        /* Percorre a fronteira e pega o menor custo */
+        for(int i = 0; i < fronteira.size(); i++) {
+            proxNo = (TreeNode) fronteira.get(i);
+            if (proxNo.getFn() < menorCusto)
                 menorCusto = proxNo.getFn();
-                proxAcao = proxNo.getAction();
-                this.noAtual = proxNo;
+        }
+        
+        /* Adiciona a lista de nós com menores custos os nós da fronteira que possuem o menor custo */
+        for(int i = 0; i < fronteira.size(); i++) {
+            proxNo = (TreeNode) fronteira.get(i);
+            if (proxNo.getFn() == menorCusto){
+                MenorCustoList.add(proxNo);
             }
         }
+        fronteira.clear();
+        this.noAtual = MenorCustoList.get(random.nextInt(MenorCustoList.size()));
+        proxAcao = this.noAtual.getAction();
         
-        /* Atualiza o H(n) do nó em que o agente está com o menor F(n) das fronteiras se não for o estado objetivo*/
-        if (!this.agnt.getProblem().testeObjetivo(this.agnt.sensorPosicao())){
-            this.Hn[this.agnt.sensorPosicao().getLin()][this.agnt.sensorPosicao().getCol()] = menorCusto;
-        }
+        /* Atualiza o H(n) do nó em que o agente está com o menor F(n) das fronteiras */
+        this.Hn[this.agnt.sensorPosicao().getLin()][this.agnt.sensorPosicao().getCol()] = menorCusto;
         
+        this.caminho.add(proxAcao);
         return proxAcao;
     }
     
     public void PrintarArvore() {
         raiz.printSubTree();
     }
+    
+    public List<Integer> getCaminho(){
+        return this.caminho;
+    }
+    
     public void RedefineBusca(){
         this.noAtual = this.raiz;
+        this.caminho.clear();
     }
 }

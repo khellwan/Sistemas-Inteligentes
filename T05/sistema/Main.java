@@ -13,6 +13,8 @@ import ambiente.*;
  */
 public class Main {
     public static void main(String args[]) {
+        
+
         // Cria o ambiente (modelo) = labirinto com suas paredes
         Model model = new Model(5, 9);
         model.labir.porParedeVertical(3, 4, 1);
@@ -37,15 +39,20 @@ public class Main {
         
         // agente escolhe proxima açao e a executa no ambiente (modificando
         // o estado do labirinto porque ocupa passa a ocupar nova posicao)
-        while(ag.razao != 1){
+        while(ag.getVetCaminhos().size() != 6){
             ag.redefineAgente();
             System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
             ag.execucao++;
             while (ag.deliberar() != -1) {  
                 model.desenhar(); 
             }
+            System.out.println("\n***** Caminho = " + ag.busca.getCaminho());
             System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
             System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
+            System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + ag.getVetCaminhos().size());
         }
+        System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + ag.getVetCaminhos().size());
+        for (int i = 0; i < ag.getVetCaminhos().size(); i++)
+            System.out.println("\n Caminho " + (i+1) + " : " + ag.getVetCaminhos().get(i));
     }
 }

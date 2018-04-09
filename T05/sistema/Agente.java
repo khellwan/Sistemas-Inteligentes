@@ -5,6 +5,10 @@ import problema.*;
 import comuns.*;
 import static comuns.PontosCardeais.*;
 import busca.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 /**
  *
  * @author tacla
@@ -19,6 +23,7 @@ public class Agente implements PontosCardeais {
     double custo;
     static int ct = -1;
     int execucao = 0;
+    List<List> VetCaminhos;
            
     public Agente(Model m) {
         this.model = m;
@@ -42,6 +47,7 @@ public class Agente implements PontosCardeais {
         // Busca
         this.busca = new BuscaLRTA_Estrela(this);
         this.razao = 50;
+        VetCaminhos = new ArrayList<>();
     }
     
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
@@ -51,10 +57,11 @@ public class Agente implements PontosCardeais {
         //ct++;
         int ap[];
         ap = prob.acoesPossiveis(estAtu);
-        int proxAcao = busca.EscolheAcao();
+        int proxAcao;
         
         // nao atingiu objetivo e ha acoesPossiveis a serem executadas no plano
         if (!prob.testeObjetivo(estAtu)) {
+           proxAcao = busca.EscolheAcao();
            System.out.println("estado atual: " + estAtu.getLin() + "," + estAtu.getCol());
            System.out.print("açoes possiveis: {");
            for (int i=0;i<ap.length;i++) {
@@ -70,7 +77,7 @@ public class Agente implements PontosCardeais {
            else
                custo = custo + 1.5;
            
-           this.razao = custo/12; // 12 é o custo ótimo
+           this.razao = custo/11.5; // 11.5 é o custo ótimo
             //System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
            System.out.println("custo ate o momento: " + custo);
            System.out.println("**************************\n\n");
@@ -79,9 +86,21 @@ public class Agente implements PontosCardeais {
            estAtu = prob.suc(estAtu, proxAcao);
                       
         }
-        else
+        else{
+            // Se o caminho ótimo ainda não existir no vetor de caminhos, adiciona ele:
+            boolean CaminhoJaExiste = false;
+            if(custo == 11.5 /*Custo ótimo hard coded */){
+                if(VetCaminhos.isEmpty())
+                    VetCaminhos.add(busca.getCaminho());
+                for (int i = 0; i < VetCaminhos.size(); i++){
+                    if (VetCaminhos.get(i).equals(busca.getCaminho()))
+                        CaminhoJaExiste = true;
+                }
+                if(!CaminhoJaExiste)
+                    this.VetCaminhos.add(busca.getCaminho());
+            }
             return (-1);
-        
+        }
         return 1;
     }
     
@@ -121,6 +140,31 @@ public class Agente implements PontosCardeais {
         this.model.setObj(2, 8);
         busca.RedefineBusca();
      }
+     
+     public List<List> getVetCaminhos(){
+         return this.VetCaminhos;
+     }
+     
+    private  boolean equalLists(List<Integer> one, List<Integer> two){
+        if (one == null && two == null){
+            return true;
+        }
+
+        if((one == null && two != null) 
+          || one != null && two == null
+          || one.size() != two.size()){
+            return false;
+        }
+
+        //to avoid messing the order of the lists we will use a copy
+        //as noted in comments by A. R. S.
+        one = new ArrayList<>(one); 
+        two = new ArrayList<>(two);
+
+        //Collections.sort(one);
+        //Collections.sort(two);
+        return one.equals(two);
+    }
 }
     
 
