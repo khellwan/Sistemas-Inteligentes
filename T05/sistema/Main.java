@@ -39,7 +39,7 @@ public class Main {
         
         // agente escolhe proxima açao e a executa no ambiente (modificando
         // o estado do labirinto porque ocupa passa a ocupar nova posicao)
-        while(ag.getVetCaminhos().size() != 6){
+        while(ag.getVetCaminhos().size() <= 6){
             ag.redefineAgente();
             System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
             ag.execucao++;
@@ -52,7 +52,7 @@ public class Main {
             System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + ag.getVetCaminhos().size());
         }
         System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + ag.getVetCaminhos().size());
-        for (int i = 0; i < ag.getVetCaminhos().size(); i++)
+        for (int i = 0; i < ag.getVetCaminhos().size()-1; i++)
             System.out.println("\n Caminho " + (i+1) + " : " + ag.getVetCaminhos().get(i));
     }
 }

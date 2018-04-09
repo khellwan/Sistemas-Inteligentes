@@ -6,9 +6,8 @@ import comuns.*;
 import static comuns.PontosCardeais.*;
 import busca.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 /**
  *
  * @author tacla
@@ -23,7 +22,8 @@ public class Agente implements PontosCardeais {
     double custo;
     static int ct = -1;
     int execucao = 0;
-    List<List> VetCaminhos;
+    int pathNumber = 0;
+    List<List<Integer>> VetCaminhos;
            
     public Agente(Model m) {
         this.model = m;
@@ -48,6 +48,7 @@ public class Agente implements PontosCardeais {
         this.busca = new BuscaLRTA_Estrela(this);
         this.razao = 50;
         VetCaminhos = new ArrayList<>();
+        VetCaminhos.add(new ArrayList<>());
     }
     
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
@@ -88,20 +89,35 @@ public class Agente implements PontosCardeais {
         }
         else{
             // Se o caminho ótimo ainda não existir no vetor de caminhos, adiciona ele:
-            boolean CaminhoJaExiste = false;
-            if(custo == 11.5 /*Custo ótimo hard coded */){
-                if(VetCaminhos.isEmpty())
-                    VetCaminhos.add(busca.getCaminho());
-                for (int i = 0; i < VetCaminhos.size(); i++){
-                    if (VetCaminhos.get(i).equals(busca.getCaminho()))
-                        CaminhoJaExiste = true;
+            if(custo == 11.5){
+                if(!checkRepeatedPath(busca.getCaminho())) {
+                    this.VetCaminhos.get(pathNumber).addAll(busca.getCaminho());
+                    pathNumber+=1;
+                    VetCaminhos.add(new ArrayList<>());
                 }
-                if(!CaminhoJaExiste)
-                    this.VetCaminhos.add(busca.getCaminho());
             }
             return (-1);
         }
         return 1;
+    }
+    
+    private boolean checkRepeatedPath(List<Integer> testList) {
+        List<Integer> curOptimalList;
+        boolean repeated;
+        for(int i = 0; i < this.VetCaminhos.size(); i++){
+            repeated = true;
+            curOptimalList = this.VetCaminhos.get(i);
+            if(curOptimalList.isEmpty()){
+                continue;
+            }
+            for(int j = 0; j < Math.min(curOptimalList.size(), testList.size());j++){
+                if(!Objects.equals(curOptimalList.get(j), testList.get(j)))
+                    repeated = false;
+            }
+            if(repeated == true)
+                return true;
+        }
+        return false;
     }
     
     /**Funciona como um driver ou um atuador: envia o comando para
@@ -141,7 +157,7 @@ public class Agente implements PontosCardeais {
         busca.RedefineBusca();
      }
      
-     public List<List> getVetCaminhos(){
+     public List<List<Integer>> getVetCaminhos(){
          return this.VetCaminhos;
      }
      
