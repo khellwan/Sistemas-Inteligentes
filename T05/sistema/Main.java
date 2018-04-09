@@ -49,9 +49,9 @@ public class Main {
             System.out.println("\n***** Caminho = " + ag.busca.getCaminho());
             System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
             System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
-            System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + ag.getVetCaminhos().size());
+            //System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + (ag.getVetCaminhos().size()-1));
         }
-        System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + ag.getVetCaminhos().size());
+        System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + (ag.getVetCaminhos().size()-1));
         for (int i = 0; i < ag.getVetCaminhos().size()-1; i++)
             System.out.println("\n Caminho " + (i+1) + " : " + ag.getVetCaminhos().get(i));
     }

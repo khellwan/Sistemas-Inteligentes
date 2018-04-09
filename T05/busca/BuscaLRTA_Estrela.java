@@ -68,7 +68,7 @@ public class BuscaLRTA_Estrela {
                 noVizinho.setAction(proxAcao);
                 noVizinho.setGnHn(this.agnt.getProblem().obterCustoAcao(noAtual.getState(), proxAcao, estadoVizinho), Hn[estadoVizinho.getLin()][estadoVizinho.getCol()]);
                 fronteira.add(noVizinho);
-                System.out.println("\nCusto (heuristica) para ir na direção " + proxAcao + " é de " + noVizinho.getHn());
+                //System.out.println("\nCusto (heuristica) para ir na direção " + proxAcao + " é de " + noVizinho.getHn());
             }    
         }
     }
