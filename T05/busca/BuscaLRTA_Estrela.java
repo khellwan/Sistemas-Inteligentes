@@ -40,8 +40,9 @@ public class BuscaLRTA_Estrela {
         for (i = 0; i < this.agnt.getProblem().crencaLabir.getMaxLin(); i++){
             for (j = 0; j < this.agnt.getProblem().crencaLabir.getMaxCol(); j++){
                 //this.Hn[i][j] = (float) Math.abs(j - this.agnt.getProblem().estObj.getCol()); // Distância horizontal
-                this.Hn[i][j] = (float) (Math.sqrt(Math.pow(j - this.agnt.getProblem().estObj.getCol(), 2) +
-                            Math.pow(i - this.agnt.getProblem().estObj.getLin(), 2))); //distância euclidiana
+//                this.Hn[i][j] = (float) (Math.sqrt(Math.pow(j - this.agnt.getProblem().estObj.getCol(), 2) +
+//                            Math.pow(i - this.agnt.getProblem().estObj.getLin(), 2))); //distância euclidiana
+                  this.Hn[i][j] = 0;
             }
         }
         
