@@ -17,7 +17,7 @@ public class Agente {
     private static final int MAX_EXECUCOES = 1000; 
     /* Tamanho da população deve ser par, pois o cruzamento é em pares */
     private static final int TAM_POP = 4;
-    private static final int MAX_GERACOES = 200;
+    private static final int MAX_GERACOES = 500;
     private static final float PROB_CROSSOVER = (float) 0.8;
     private static final float PROB_MUTACAO = (float) 0.05;
     
@@ -46,7 +46,7 @@ public class Agente {
            selecao[i] = 0;
         }
         for (i = 0; i < fitness.length; i++) {
-                fitnessRel[i] = (float) fitness[i] / soma;
+                fitnessRel[i] = (float) fitness[i] / (float) soma;
         }
         for (i = 0; i < qtdCromossomos; i++) {
             float acumulado = 0;
@@ -118,22 +118,22 @@ public class Agente {
         int esq = esquerda;
         int dir = direita;
         Mochila pivo = v[(esq + dir) / 2];
-        Mochila troca;
+        Mochila troca = new Mochila();
         while (esq <= dir) {
-                while (v[esq].calcularFitness(PENALIZACAO) < pivo.calcularFitness(PENALIZACAO)) {
+                while (v[esq].valorAtual < pivo.valorAtual) {
                         esq = esq + 1;
                         if (esq == direita)
                             break;
                 }
-                while (v[dir].calcularFitness(PENALIZACAO) > pivo.calcularFitness(PENALIZACAO)) {
+                while (v[dir].valorAtual > pivo.valorAtual) {
                         dir = dir - 1;
                         if (dir == -1)
                             break;
                 }
                 if (esq <= dir) {
-                        troca = v[esq];
-                        v[esq] = v[dir];
-                        v[dir] = troca;
+                        troca = Mochila.clonarMochila(v[esq]);
+                        v[esq] = Mochila.clonarMochila(v[dir]);
+                        v[dir] = Mochila.clonarMochila(troca);
                         esq = esq + 1;
                         dir = dir - 1;
                 }
@@ -153,6 +153,7 @@ public class Agente {
         
         while(geracao < MAX_GERACOES){
             
+            
             for(int i = 0; i < TAM_POP; i++)
                 this.fitness[i] = pais_e_filhos[i].calcularFitness(PENALIZACAO);
 
@@ -168,9 +169,18 @@ public class Agente {
                 crossover(pais_e_filhos[i], pais_e_filhos[i+1], Agente.PROB_CROSSOVER);
                 mutacao(pais_e_filhos[i], Agente.PROB_MUTACAO);
                 mutacao(pais_e_filhos[i+1], Agente.PROB_MUTACAO);
-            }
+            }   
+            
+            System.out.printf("\n Antes: \n");
+            
+            for(int i = 0; i < 2*TAM_POP; i++)
+                System.out.printf("" + pais_e_filhos[i].getValorAtual() + ", ");
             
             quickSort(pais_e_filhos, 0, 2*TAM_POP-1);
+            System.out.printf("\n Depois: \n");
+            
+            for(int i = 0; i < 2*TAM_POP; i++)
+                System.out.printf("" + pais_e_filhos[i].getValorAtual() + ", ");
             
             if(pais_e_filhos[2*TAM_POP-1].calcularFitness(PENALIZACAO) > melhorFitness)
             {
@@ -185,15 +195,19 @@ public class Agente {
     public static void main(String args[]) {
         Mochila best;
         int exec = 0;
+        Mochila melhor_valor = new Mochila();
         System.out.printf("Qtd,  Peso, Valor\n");
         while (exec < MAX_EXECUCOES){
             Agente zerozerosete = new Agente();
             best = zerozerosete.executar();
             if (best != null) {
                 best.imprimirMochila();
+                if (best.getValorAtual() > melhor_valor.getValorAtual())
+                    melhor_valor = Mochila.clonarMochila(best);
             }
             exec++;
-//            System.out.println("Total de execucoes = " + exec);
         } 
+        System.out.println("\n ----- Melhor mochila:\n");
+        melhor_valor.imprimirMochila();
     }
 }
