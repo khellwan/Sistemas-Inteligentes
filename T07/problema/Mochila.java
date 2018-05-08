@@ -43,25 +43,25 @@ public class Mochila {
     }
     
     public void imprimirMochila() {
-        System.out.printf("Mochila,  peso, valor\n");
-        System.out.printf("-------------------\n");
-        for (int i = 0; i < QTD_ITENS_TOTAL; i++) {
-            if (toNumTo[i] == true) {
-                System.out.printf("item[%2d], %4d, %5d\n", i+1, pesoItem[i], valorItem[i]);
-            }
-        }
-        System.out.printf("---------------------\n");
-        System.out.printf("Mochila com %3d ITENS\n", qtdItensNaMochila);
-        System.out.printf("Mochila com %3d KG\n", pesoAtual);
-        System.out.printf("Mochila com %3d VALOR\n", valorAtual);
-        System.out.printf("---------------------\n");
+//        System.out.printf("Mochila,  peso, valor\n");
+//        System.out.printf("-------------------\n");
+//        for (int i = 0; i < QTD_ITENS_TOTAL; i++) {
+//            if (toNumTo[i] == true) {
+//                System.out.printf("item[%2d], %4d, %5d\n", i+1, pesoItem[i], valorItem[i]);
+//            }
+//        }
+//        System.out.printf("---------------------\n");
+//        System.out.printf("Mochila com %3d ITENS\n", qtdItensNaMochila);
+//        System.out.printf("Mochila com %3d KG\n", pesoAtual);
+//        System.out.printf("Mochila com %3d VALOR\n", valorAtual);
+//        System.out.printf("---------------------\n");
 
-     /*   System.out.printf("%3d", qtdItensNaMochila);
+        System.out.printf("%3d", qtdItensNaMochila);
         System.out.printf(",");
         System.out.printf("%3d", pesoAtual);
         System.out.printf(",");
         System.out.printf("%3d", valorAtual);
-        System.out.printf("\n");*/
+        System.out.printf("\n");
 
     }
     
@@ -82,7 +82,7 @@ public class Mochila {
     }
     
     private void penaliza(){
-        this.valorAtual = valorAtual/2;
+        this.valorAtual = this.valorAtual/6;
     }
     
     private void repara(){
@@ -131,6 +131,7 @@ public class Mochila {
                 dolly.colocarItem(i);
             }
         }
+//        dolly.valorAtual = bag.valorAtual;
         return(dolly);
     }
     
