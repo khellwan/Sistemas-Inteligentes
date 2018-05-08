@@ -16,15 +16,15 @@ public class Agente {
     
     private static final int MAX_EXECUCOES = 1000; 
     /* Tamanho da população deve ser par, pois o cruzamento é em pares */
-    private static final int TAM_POP = 4;
-    private static final int MAX_GERACOES = 1000;
-    private static final float PROB_CROSSOVER = (float) 0.8;
-    private static final float PROB_MUTACAO = (float) 0.05;
+    private static final int TAM_POP = 32;
+    private static final int MAX_GERACOES = 200;
+    private static final float PROB_CROSSOVER = (float) 0.75;
+    private static final float PROB_MUTACAO = (float) 0.04;
     
     /* População stuff */
     private final Mochila pais_e_filhos[] = new Mochila[2*TAM_POP];
     private final int[] fitness = new int[TAM_POP];
-    private static final int PENALIZACAO = 0; // 0 -> penaliza , 1-> repara
+    private static final int PENALIZACAO = 1; // 0 -> penaliza , 1-> repara
     
     Agente(){
         for (int i = 0; i < TAM_POP; i++) {
