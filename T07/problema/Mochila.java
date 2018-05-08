@@ -82,7 +82,8 @@ public class Mochila {
     }
     
     private void penaliza(){
-        this.valorAtual = Math.round(this.valorAtual * CAPACIDADE_MOCHILA/this.pesoAtual);
+        //this.valorAtual = Math.round(this.valorAtual * CAPACIDADE_MOCHILA/this.pesoAtual);
+        this.valorAtual = this.valorAtual/8;
     }
     
     private void repara(){

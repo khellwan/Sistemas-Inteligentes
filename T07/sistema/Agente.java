@@ -24,7 +24,7 @@ public class Agente {
     /* População stuff */
     private final Mochila pais_e_filhos[] = new Mochila[2*TAM_POP];
     private final int[] fitness = new int[TAM_POP];
-    private static final int PENALIZACAO = 1; // 0 -> penaliza , 1-> repara
+    private static final int PENALIZACAO = 0; // 0 -> penaliza , 1-> repara
     
     Agente(){
         for (int i = 0; i < TAM_POP; i++) {
@@ -192,6 +192,7 @@ public class Agente {
                 bestBag = pais_e_filhos[0];
             }
             geracao++;
+            //System.out.println(geracao + ", " + bestBag.getValorAtual());
 //            for(int i = 0; i < 2*TAM_POP; i++){
 //                System.out.printf("(valor:" + pais_e_filhos[i].getValorAtual() + " peso:"+ pais_e_filhos[i].getPesoAtual()+"), ");
 //            }
