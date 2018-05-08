@@ -24,7 +24,7 @@ public class Agente {
     /* População stuff */
     private final Mochila pais_e_filhos[] = new Mochila[2*TAM_POP];
     private final int[] fitness = new int[TAM_POP];
-    private static final int PENALIZACAO = 1; // 0 -> penaliza , 1-> repara
+    private static final int PENALIZACAO = 0; // 0 -> penaliza , 1-> repara
     
     Agente(){
         for (int i = 0; i < TAM_POP; i++) {
@@ -177,16 +177,15 @@ public class Agente {
 //            
 //            for(int i = 0; i < 2*TAM_POP; i++)
 //                System.out.printf("" + pais_e_filhos[i].getValorAtual() + ", ");
-            
+            for(int i = 1; i < 2*TAM_POP; i++){
+                pais_e_filhos[i].calcularFitness(PENALIZACAO);
+            }
+            int fit = pais_e_filhos[0].calcularFitness(PENALIZACAO);
             quickSort(pais_e_filhos, 0, 2*TAM_POP-1);
 //            System.out.printf("\n Depois: \n");
 //            
 //            for(int i = 0; i < 2*TAM_POP; i++)
 //                System.out.printf("" + pais_e_filhos[i].getValorAtual() + ", ");
-            for(int i = 1; i < 2*TAM_POP; i++){
-                pais_e_filhos[i].calcularFitness(PENALIZACAO);
-            }
-            int fit = pais_e_filhos[0].calcularFitness(PENALIZACAO);
             if( fit > melhorFitness)
             {
                 melhorFitness = fit;
