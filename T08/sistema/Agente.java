@@ -8,6 +8,7 @@ import busca.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  *
@@ -26,6 +27,8 @@ public class Agente implements PontosCardeais {
     static final int VALOR_MELHOR_CAMINHO = 12;
     int execucao = 0;
     int pathNumber = 0;
+    int energia;
+    char[] mapaFrutas[][];
     List<List<Integer>> VetCaminhos;
            
     public Agente(Model m) {
@@ -56,6 +59,11 @@ public class Agente implements PontosCardeais {
         this.razao = 50;
         VetCaminhos = new ArrayList<>();
         VetCaminhos.add(new ArrayList<>());
+	
+	// Energia
+	this.energia = 3;
+	this.mapaFrutas = new char[5][this.getProblem().crencaLabir.getMaxLin()][this.getProblem().crencaLabir.getMaxCol()];
+	geraMapaFrutas();
     }
     
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
@@ -78,6 +86,9 @@ public class Agente implements PontosCardeais {
            }
 
            executarIr(proxAcao);
+           //calculaEnergia(proxAcao, comer); // Diminui a quantidade de energia 
+                                              // gasta a se andar e aumenta a quantidade proporcionada pela fruta caso
+                                              // comer seja true.
            
            // atualiza custo
            if (proxAcao % 2 == 0 ) // acoes pares = N, L, S, O
@@ -85,9 +96,9 @@ public class Agente implements PontosCardeais {
            else
                custo = custo + 1.5;
            
-           this.razao = custo/VALOR_MELHOR_CAMINHO; // 11.5 é o custo ótimo
+           this.razao = custo/VALOR_MELHOR_CAMINHO;
             //System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
-           System.out.println("custo ate o momento: " + custo);
+           System.out.println("}\ncusto ate o momento: " + custo);
            System.out.println("**************************\n\n");
            
            // atualiza estado atual - sabendo que o ambiente eh deterministico
@@ -144,7 +155,7 @@ public class Agente implements PontosCardeais {
         return new Estado(pos[0], pos[1]);
     }
         
-     public Problema getProblem(){
+     public final Problema getProblem(){
          return this.prob;
      }
      
@@ -159,8 +170,8 @@ public class Agente implements PontosCardeais {
      public void redefineAgente(){
         this.estAtu = prob.estIni;
         this.custo = 0;
-        this.model.setPos(4, 0);
-        this.model.setObj(2, 8);
+        this.model.setPos(8, 0);
+        this.model.setObj(2, 6);
         busca.RedefineBusca();
      }
      
@@ -188,6 +199,129 @@ public class Agente implements PontosCardeais {
         //Collections.sort(two);
         return one.equals(two);
     }
+    
+    // Gera frutas aleatórias
+    public final void geraMapaFrutas() {
+	int maxLinhas = this.getProblem().crencaLabir.getMaxLin();
+	int maxColunas = this.getProblem().crencaLabir.getMaxCol();
+	char[] fruta = new char[5];
+	char[] cores1_2_e_3 = {'R', 'G', 'B'};
+	char[] cores0_e_4 = {'K', 'W'};
+	Random randFruta = new Random();
+
+	for (int i = 0; i < maxLinhas; i++) {
+	    for (int j = 0; j < maxColunas; j++) {
+		fruta[0] = cores0_e_4[randFruta.nextInt()%2];
+		fruta[1] = cores1_2_e_3[randFruta.nextInt()%3];
+		fruta[2] = cores1_2_e_3[randFruta.nextInt()%3];
+		fruta[3] = cores1_2_e_3[randFruta.nextInt()%3];
+		fruta[4] = cores0_e_4[randFruta.nextInt()%2];
+		this.mapaFrutas[i][j] = fruta;
+	    }
+	}
+    }
+    
+    /* Função que retorna a quantidade de energia de uma fruta baseada
+       na árvore de decisão gerada pelo Weka */
+    public int calculaEnergia (char cor[]){
+        if (cor.length != 5)
+            return -9999;
+	
+	/* Árvore */
+	
+	// Ramo 1
+	if (cor[1] == 'R') {
+	    if (cor[3] == 'R') {
+		if (cor[2] == 'R')
+		    return 4;
+		if (cor[2] == 'G')
+		    return 2;
+		if (cor[2] == 'B')
+		    return 2;
+	    }
+	    else if (cor[3] == 'G') {
+		if (cor[2] == 'R')
+		    return 2;
+		if (cor[2] == 'G')
+		    return 2;
+		if (cor[2] == 'B')
+		    return 0;
+	    }
+	    else if (cor[3] == 'B') {
+		if (cor[2] == 'R')
+		    return 2;
+		if (cor[2] == 'G')
+		    return 4;
+		if (cor[2] == 'B')
+		    return 2;
+	    } 
+	}
+	
+	// Ramo 2
+	else if(cor[1] == 'G') {
+	    if (cor[0] == 'K'){
+		if (cor[3] == 'R') {
+		    if (cor[2] == 'R')
+			return 2;
+		    if (cor[2] == 'G')
+			return 2;
+		    if (cor[2] == 'B')
+			return 0;
+		}
+		else if (cor[3] == 'G') {
+		    if (cor[2] == 'R')
+			return 2;
+		    if (cor[2] == 'G')
+			return 4;
+		    if (cor[2] == 'B')
+			return 2;
+		}
+		else if (cor[3] == 'B') {
+		    if (cor[2] == 'R')
+			return 0;
+		    if (cor[2] == 'G')
+			return 2;
+		    if (cor[2] == 'B')
+			return 2;
+		} 
+	    }
+	    else if (cor[0] == 'W')
+		return 0;
+	}
+	
+	// Ramo 3
+	else if (cor[1] == 'B') {
+	    if (cor[2] == 'R') {
+		if (cor[3] == 'R')
+		    return 2;
+		if (cor[3] == 'G')
+		    return 0;
+		if (cor[3] == 'B')
+		    return 2;
+	    }
+	    else if (cor[2] == 'G') {
+		if (cor[3] == 'R')
+		    return 0;
+		if (cor[3] == 'G')
+		    return 2;
+		if (cor[3] == 'B')
+		    return 2;
+	    }
+	    else if (cor[2] == 'B') {
+		if (cor[3] == 'R')
+		    return 2;
+		if (cor[3] == 'G')
+		    return 2;
+		if (cor[3] == 'B')
+		    return 4;
+	    } 
+	}
+	
+	// Qualquer outro caso
+        return -9999;
+    }
+    
+    
 }
     
 

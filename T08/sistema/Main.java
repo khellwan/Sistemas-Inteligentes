@@ -43,7 +43,7 @@ public class Main {
         
         // agente escolhe proxima açao e a executa no ambiente (modificando
         // o estado do labirinto porque ocupa passa a ocupar nova posicao)
-        while(ag.getVetCaminhos().size() <= 2){
+        while(ag.getVetCaminhos().size() <= 7){
             ag.redefineAgente();
             System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
             ag.execucao++;
