@@ -45,46 +45,40 @@ public class Main {
         // o estado do labirinto porque ocupa passa a ocupar nova posicao)
         while(ag.getVetCaminhos().size() <= 7){
             ag.redefineAgente();
-            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
+//            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
             ag.execucao++;
-            while (ag.deliberar(true) != -1) {  //parametro passado diz se a decisao de comer é aleatorio ou não
-                model.desenhar(); 
+            while (ag.deliberar(true,false) != -1) {  //1º parametro -> comer é aleatorio ou não, 2º parametro -> ir pelo caminho ótimo
+//                model.desenhar(); 
             }
-            System.out.println("\n***** Caminho = " + ag.busca.getCaminho());
-            System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
-            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
+//            System.out.println("\n***** Caminho = " + ag.busca.getCaminho());
+//            System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
+//            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
             //System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + (ag.getVetCaminhos().size()-1));
         }
         System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + (ag.getVetCaminhos().size()-1));
         for (int i = 0; i < ag.getVetCaminhos().size()-1; i++)
             System.out.println("\n Caminho " + (i+1) + " : " + ag.getVetCaminhos().get(i));
-        
+        System.out.println("\n*** 100 execuções aleatorias ***\n");
         for (int i = 0; i < 100; i++){
-            System.out.println("\n*** 100 execuções aleatorias ***\n");
             ag.redefineAgente();
-            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
+//            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
             ag.execucao++;
-            while (ag.deliberar(true) != -1) {  //parametro passado diz se a decisao de comer é aleatorio ou não
-                model.desenhar(); 
+            while (ag.deliberar(true,true) != -1) {  //1º parametro -> comer é aleatorio ou não, 2º parametro -> ir pelo caminho ótimo
+//                model.desenhar(); 
             }
-            System.out.println("\n***** Caminho = " + ag.busca.getCaminho());
-            System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
-            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
-            //System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + (ag.getVetCaminhos().size()-1));
+//            System.out.println("\n***** rand Razão de Competitividade = " + ag.getRazao());
+//            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
         }
-        
+        System.out.println("\n*** 100 execuções com algoritmo de decisao ***\n");
         for (int i = 0; i < 100; i++){
-            System.out.println("\n*** 100 execuções com algoritmo de decisao ***\n");
             ag.redefineAgente();
-            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
+//            System.out.println("\n*** Inicio do ciclo de raciocinio do agente ***\n");
             ag.execucao++;
-            while (ag.deliberar(false) != -1) {  //parametro passado diz se a decisao de comer é aleatorio ou não
-                model.desenhar(); 
+            while (ag.deliberar(false,true) != -1) {  //1º parametro -> comer é aleatorio ou não, 2º parametro -> ir pelo caminho ótimo
+//                model.desenhar(); 
             }
-            System.out.println("\n***** Caminho = " + ag.busca.getCaminho());
-            System.out.println("\n***** Razão de Competitividade = " + ag.getRazao());
-            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
-            //System.out.println("\n*_*_*_*_* Caminhos ótimos encontrados = " + (ag.getVetCaminhos().size()-1));
+//            System.out.println("\n***** alg Razão de Competitividade = " + ag.getRazao());
+//            System.out.println("\n***** Número de Execuções = " + ag.getExecucao());
         }
     }
 }

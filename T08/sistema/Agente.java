@@ -28,6 +28,8 @@ public class Agente implements PontosCardeais {
     int execucao = 0;
     int pathNumber = 0;
     double energia;
+    int step;
+    int caminhoAtual = 0;
     char[] mapaFrutas[][];
     List<List<Integer>> VetCaminhos;
            
@@ -64,7 +66,7 @@ public class Agente implements PontosCardeais {
     /**Escolhe qual ação (UMA E SOMENTE UMA) será executada em um ciclo de raciocínio
      * @return 1 enquanto o plano não acabar; -1 quando acabar
      */
-    public int deliberar(boolean random) {
+    public int deliberar(boolean random, boolean caminhoOtimo) {
         //ct++;
         int ap[];
         ap = prob.acoesPossiveis(estAtu);
@@ -73,16 +75,23 @@ public class Agente implements PontosCardeais {
         
         // nao atingiu objetivo e ha acoesPossiveis a serem executadas no plano
         if (!prob.testeObjetivo(estAtu)) {
-           proxAcao = busca.EscolheAcao();
-           System.out.println("estado atual: " + estAtu.getLin() + "," + estAtu.getCol());
-           System.out.print("açoes possiveis: {");
-           for (int i=0;i<ap.length;i++) {
-               if (ap[i]!=-1)
-                   System.out.print(acao[i]+" ");
+           if (caminhoOtimo){
+//               System.out.println("\n Caminho escolhido:" + this.VetCaminhos.get(this.caminhoAtual) + "step: " + this.step);
+               proxAcao = this.VetCaminhos.get(this.caminhoAtual).get(this.step);
+               step++;
+           }else{
+               proxAcao = busca.EscolheAcao();
            }
-
+//           System.out.println("estado atual: " + estAtu.getLin() + "," + estAtu.getCol());
+//           System.out.print("açoes possiveis: {");
+           for (int i=0;i<ap.length;i++) {
+               if (ap[i]!=-1){
+//                   System.out.print(acao[i]+" ");
+               }
+           }
+//           System.out.println("}");
            executarIr(proxAcao);
-           boolean comer = comoNumComo(random);
+           boolean comer = comoNumComo(random, proxAcao);
            if (comer)
                this.energia += calculaEnergia(mapaFrutas[estAtu.getLin()][estAtu.getCol()]);
            
@@ -98,8 +107,8 @@ public class Agente implements PontosCardeais {
            
            this.razao = custo/VALOR_MELHOR_CAMINHO;
             //System.out.println("}\nct = "+ ct + " de " + (plan.length-1) + " ação escolhida=" + acao[plan[ct]]);
-           System.out.println("}\ncusto ate o momento: " + custo);
-           System.out.println("**************************\n\n");
+//           System.out.println("custo ate o momento: " + custo);
+//           System.out.println("**************************\n\n");
            
            // atualiza estado atual - sabendo que o ambiente eh deterministico
            estAtu = prob.suc(estAtu, proxAcao);
@@ -122,7 +131,7 @@ public class Agente implements PontosCardeais {
                 this.energia = this.energia * (-1);
 //                System.out.println("Sobrou energia");
             }
-            System.out.println("Energia no fim da execução: " + this.energia);
+            System.out.println(this.execucao + "," + this.energia);
             return (-1);
         }
         return 1;
@@ -184,6 +193,11 @@ public class Agente implements PontosCardeais {
         this.model.setObj(2, 6);
         // Energia
 	this.energia = 3;
+        this.step = 0;
+        if (this.VetCaminhos.size() > 2){
+            Random rand = new Random();
+            this.caminhoAtual = rand.nextInt(this.VetCaminhos.size()-1); 
+        }
 	this.mapaFrutas = new char[this.getProblem().crencaLabir.getMaxLin()][this.getProblem().crencaLabir.getMaxCol()][5];
 	geraMapaFrutas();
         
@@ -336,7 +350,7 @@ public class Agente implements PontosCardeais {
         return -9999;
     }
     
-    public boolean comoNumComo (boolean random){
+    public boolean comoNumComo (boolean random, int acao){
         if(random == true){
             Random num = new Random();
             if(num.nextInt(2) == 1){
@@ -349,7 +363,12 @@ public class Agente implements PontosCardeais {
             }
         }
         int val = calculaEnergia(mapaFrutas[estAtu.getLin()][estAtu.getCol()]);
-        double foo =  this.energia - (Math.abs(prob.estObj.getCol() - estAtu.getCol()) + Math.abs(prob.estObj.getLin() - estAtu.getLin()));
+        double bar = (Math.abs(prob.estObj.getCol() - estAtu.getCol()) + Math.abs(prob.estObj.getLin() - estAtu.getLin()));
+//        System.out.println("energia: " + this.energia + " delta: " + bar + "valor: " + val);
+        if (acao%2 == 1){
+            bar = bar - 1;
+        }
+        double foo =  this.energia - bar;
         if (foo < 0){
 //            System.out.println("Comeu");
             return true;
