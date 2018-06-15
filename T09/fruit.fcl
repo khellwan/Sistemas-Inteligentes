@@ -1,0 +1,45 @@
+
+
+FUNCTION_BLOCK comoNumComo	// Block definition (there may be more than one block per file)
+
+VAR_INPUT					// Define input variables
+	energia_fruta 		: REAL;
+	energia_faltante 	: REAL;
+END_VAR
+
+VAR_OUTPUT					// Define output variable
+	comer : REAL;			// Define whether to eat or not
+END_VAR
+
+FUZZIFY energia_fruta		// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM nada := (0, 0) (1, 1) (2, 0) ;
+	TERM meh  := (2, 0) (3, 1) (4, 0) ;
+	TERM opa  := (4, 0) (5, 1) (6, 0) ;
+END_FUZZIFY
+
+FUZZIFY energia_faltante
+	TERM ja_passou      := (-5, 1) (-1, 1) (0, 0);
+	TERM pouco	 		:= (0, 0) (1, 1) (2, 0) ;
+	TERM mais_ou_menos 	:= (2, 0) (3, 1) (4, 0) ;
+	TERM bastante		:= (4, 0) (5, 1) (12, 1) ;
+END_FUZZIFY
+
+DEFUZZIFY comer				// Defuzzify output variable 'comer' : {'Como', 'NumComo'}
+	TERM NumComo    		:= (0, 1) (0.6, 0) ;
+	TERM Como 				:= (0.4, 0) (1, 1) ;
+	METHOD : COG;			// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;			// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;				// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;				// Use 'min' activation method
+	ACCU : MAX;				// Use 'max' accumulation method
+
+	RULE 1 : IF energia_fruta IS nada THEN comer IS NumComo;
+	RULE 2 : IF energia_faltante IS ja_passou THEN comer IS NumComo;
+	RULE 3 : IF energia_fruta IS meh AND energia_faltante IS pouco THEN comer IS Como; 
+	RULE 4 : IF energia_fruta IS opa AND energia_faltante IS bastante THEN comer IS Como; 
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
